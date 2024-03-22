@@ -1,4 +1,4 @@
-# \[WIP\] Parallel algorithms example with K8s
+# [WIP] Parallel algorithms example with K8s
 
 This code is an example of using Kubernetes to deploy an A* algorithm that can use parallelism. 
 It will simulate a central message broker, that will coordinate all the different pods.
