@@ -90,7 +90,7 @@ class TestParser(unittest.TestCase):
         self.assertEqual(len(p_effects), 1)
 
     def test_parseActions(self):
-        self.assertEqual(len(self.p.actions), 33)
+        self.assertEqual(len(self.p.actions), 34)
 
 
 if __name__ == '__main__':
