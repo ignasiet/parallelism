@@ -1,0 +1,377 @@
+problem:
+  name: skirmisher
+  objects:
+    - agent: 
+      - agent_1
+    - objective:
+      - objective_1
+    - pos:
+      - pos_1_1
+      - pos_1_8
+      - pos_1_9
+      - pos_1_10
+      - pos_2_1
+      - pos_2_2
+      - pos_2_3
+      - pos_2_4
+      - pos_2_5
+      - pos_2_6
+      - pos_2_7
+      - pos_2_8
+      - pos_2_10
+      - pos_3_1
+      - pos_3_5
+      - pos_3_6
+      - pos_3_7
+      - pos_3_8
+      - pos_3_10
+      - pos_4_1
+      - pos_4_2
+      - pos_4_3
+      - pos_4_4
+      - pos_4_5
+      - pos_4_6
+      - pos_4_7
+      - pos_4_8
+      - pos_4_10
+      - pos_5_1
+      - pos_5_2
+      - pos_5_3
+      - pos_5_4
+      - pos_5_5
+      - pos_5_7
+      - pos_5_8
+      - pos_5_10
+      - pos_6_1
+      - pos_6_2
+      - pos_6_7
+      - pos_6_8
+      - pos_6_9
+      - pos_6_10
+      - pos_7_1
+      - pos_7_2
+      - pos_7_3
+      - pos_7_4
+      - pos_7_5
+      - pos_7_7
+      - pos_7_8
+      - pos_7_10
+      - pos_8_1
+      - pos_8_2
+      - pos_8_3
+      - pos_8_4
+      - pos_8_5
+      - pos_8_6
+      - pos_8_7
+      - pos_8_8
+      - pos_8_10
+      - pos_9_1
+      - pos_9_2
+      - pos_9_7
+      - pos_9_10
+      - pos_10_1
+      - pos_10_2
+      - pos_10_3
+      - pos_10_4
+      - pos_10_5
+      - pos_10_6
+      - pos_10_7
+      - pos_10_8
+      - pos_10_9
+      - pos_10_10
+  predicates:
+    adjacent: pos, pos
+    at: agent, pos
+    located: objective, pos
+    secured: objective
+    corner: pos
+    outside: agent
+  actions:
+    - name: board
+      parameters:
+        - who: agent
+        - from: pos
+      precond:
+        corner:
+          - from
+        outside:
+          - who
+      effect:
+        pos:
+          - at:
+            - who
+            - from
+        neg:
+          - outside:
+            - who
+    - name: move
+      parameters:
+        - who: agent
+        - from: pos
+        - to: pos
+      precond:
+        at:
+          - who
+          - from
+        adjacent:
+          - from
+          - to
+      effect:
+        pos:
+          - at:
+            - who
+            - to
+        neg:
+          - at:
+            - who
+            - from
+    - name: grab
+      parameters:
+        - who: agent
+        - where: pos
+        - what: objective
+      precond:
+        at:
+          - who
+          - where
+        located:
+          - what
+          - where
+      effect:
+        pos:
+          - grabbed:
+            - what
+        neg:
+          - located:
+            - what
+            - where
+    - name: secure
+      parameters:
+        - who: agent
+        - where: pos
+        - what: objective
+      precond:
+        grabbed:
+          - what
+        at:
+          - who
+          - where
+        corner:
+          - where
+      effect:
+        pos:
+          - secured:
+            - what
+        neg:
+          - grabbed:
+            - what
+          - at:
+            - who
+            - where
+  goal:
+    - secured_objective_1
+  init:
+    - outside_agent_1
+    - corner_pos_1_1
+    - corner_pos_1_10
+    - corner_pos_11_1
+    - corner_pos_11_10
+    - located_objective_1_pos_7_5
+    - adjacent_pos_1_1_pos_2_1
+    - adjacent_pos_1_8_pos_2_8
+    - adjacent_pos_1_8_pos_1_9
+    - adjacent_pos_1_9_pos_1_10
+    - adjacent_pos_1_9_pos_1_8
+    - adjacent_pos_1_10_pos_2_10
+    - adjacent_pos_1_10_pos_1_9
+    - adjacent_pos_2_1_pos_3_1
+    - adjacent_pos_2_1_pos_1_1
+    - adjacent_pos_2_1_pos_2_2
+    - adjacent_pos_2_2_pos_2_3
+    - adjacent_pos_2_2_pos_2_1
+    - adjacent_pos_2_3_pos_2_4
+    - adjacent_pos_2_3_pos_2_2
+    - adjacent_pos_2_4_pos_2_5
+    - adjacent_pos_2_4_pos_2_3
+    - adjacent_pos_2_5_pos_3_5
+    - adjacent_pos_2_5_pos_2_6
+    - adjacent_pos_2_5_pos_2_4
+    - adjacent_pos_2_6_pos_3_6
+    - adjacent_pos_2_6_pos_2_7
+    - adjacent_pos_2_6_pos_2_5
+    - adjacent_pos_2_7_pos_3_7
+    - adjacent_pos_2_7_pos_2_8
+    - adjacent_pos_2_7_pos_2_6
+    - adjacent_pos_2_8_pos_3_8
+    - adjacent_pos_2_8_pos_1_8
+    - adjacent_pos_2_8_pos_2_7
+    - adjacent_pos_2_10_pos_3_10
+    - adjacent_pos_2_10_pos_1_10
+    - adjacent_pos_3_1_pos_4_1
+    - adjacent_pos_3_1_pos_2_1
+    - adjacent_pos_3_5_pos_4_5
+    - adjacent_pos_3_5_pos_2_5
+    - adjacent_pos_3_5_pos_3_6
+    - adjacent_pos_3_6_pos_4_6
+    - adjacent_pos_3_6_pos_2_6
+    - adjacent_pos_3_6_pos_3_7
+    - adjacent_pos_3_6_pos_3_5
+    - adjacent_pos_3_7_pos_4_7
+    - adjacent_pos_3_7_pos_2_7
+    - adjacent_pos_3_7_pos_3_8
+    - adjacent_pos_3_7_pos_3_6
+    - adjacent_pos_3_8_pos_4_8
+    - adjacent_pos_3_8_pos_2_8
+    - adjacent_pos_3_8_pos_3_7
+    - adjacent_pos_3_10_pos_4_10
+    - adjacent_pos_3_10_pos_2_10
+    - adjacent_pos_4_1_pos_5_1
+    - adjacent_pos_4_1_pos_3_1
+    - adjacent_pos_4_1_pos_4_2
+    - adjacent_pos_4_2_pos_5_2
+    - adjacent_pos_4_2_pos_4_3
+    - adjacent_pos_4_2_pos_4_1
+    - adjacent_pos_4_3_pos_5_3
+    - adjacent_pos_4_3_pos_4_4
+    - adjacent_pos_4_3_pos_4_2
+    - adjacent_pos_4_4_pos_5_4
+    - adjacent_pos_4_4_pos_4_5
+    - adjacent_pos_4_4_pos_4_3
+    - adjacent_pos_4_5_pos_5_5
+    - adjacent_pos_4_5_pos_3_5
+    - adjacent_pos_4_5_pos_4_6
+    - adjacent_pos_4_5_pos_4_4
+    - adjacent_pos_4_6_pos_3_6
+    - adjacent_pos_4_6_pos_4_7
+    - adjacent_pos_4_6_pos_4_5
+    - adjacent_pos_4_7_pos_5_7
+    - adjacent_pos_4_7_pos_3_7
+    - adjacent_pos_4_7_pos_4_8
+    - adjacent_pos_4_7_pos_4_6
+    - adjacent_pos_4_8_pos_5_8
+    - adjacent_pos_4_8_pos_3_8
+    - adjacent_pos_4_8_pos_4_7
+    - adjacent_pos_4_10_pos_5_10
+    - adjacent_pos_4_10_pos_3_10
+    - adjacent_pos_5_1_pos_6_1
+    - adjacent_pos_5_1_pos_4_1
+    - adjacent_pos_5_1_pos_5_2
+    - adjacent_pos_5_2_pos_6_2
+    - adjacent_pos_5_2_pos_4_2
+    - adjacent_pos_5_2_pos_5_3
+    - adjacent_pos_5_2_pos_5_1
+    - adjacent_pos_5_3_pos_4_3
+    - adjacent_pos_5_3_pos_5_4
+    - adjacent_pos_5_3_pos_5_2
+    - adjacent_pos_5_4_pos_4_4
+    - adjacent_pos_5_4_pos_5_5
+    - adjacent_pos_5_4_pos_5_3
+    - adjacent_pos_5_5_pos_4_5
+    - adjacent_pos_5_5_pos_5_4
+    - adjacent_pos_5_7_pos_6_7
+    - adjacent_pos_5_7_pos_4_7
+    - adjacent_pos_5_7_pos_5_8
+    - adjacent_pos_5_8_pos_6_8
+    - adjacent_pos_5_8_pos_4_8
+    - adjacent_pos_5_8_pos_5_7
+    - adjacent_pos_5_10_pos_6_10
+    - adjacent_pos_5_10_pos_4_10
+    - adjacent_pos_6_1_pos_7_1
+    - adjacent_pos_6_1_pos_5_1
+    - adjacent_pos_6_1_pos_6_2
+    - adjacent_pos_6_2_pos_7_2
+    - adjacent_pos_6_2_pos_5_2
+    - adjacent_pos_6_2_pos_6_1
+    - adjacent_pos_6_7_pos_7_7
+    - adjacent_pos_6_7_pos_5_7
+    - adjacent_pos_6_7_pos_6_8
+    - adjacent_pos_6_8_pos_7_8
+    - adjacent_pos_6_8_pos_5_8
+    - adjacent_pos_6_8_pos_6_9
+    - adjacent_pos_6_8_pos_6_7
+    - adjacent_pos_6_9_pos_6_10
+    - adjacent_pos_6_9_pos_6_8
+    - adjacent_pos_6_10_pos_7_10
+    - adjacent_pos_6_10_pos_5_10
+    - adjacent_pos_6_10_pos_6_9
+    - adjacent_pos_7_1_pos_8_1
+    - adjacent_pos_7_1_pos_6_1
+    - adjacent_pos_7_1_pos_7_2
+    - adjacent_pos_7_2_pos_8_2
+    - adjacent_pos_7_2_pos_6_2
+    - adjacent_pos_7_2_pos_7_3
+    - adjacent_pos_7_2_pos_7_1
+    - adjacent_pos_7_3_pos_8_3
+    - adjacent_pos_7_3_pos_7_4
+    - adjacent_pos_7_3_pos_7_2
+    - adjacent_pos_7_4_pos_8_4
+    - adjacent_pos_7_4_pos_7_5
+    - adjacent_pos_7_4_pos_7_3
+    - adjacent_pos_7_5_pos_8_5
+    - adjacent_pos_7_5_pos_7_4
+    - adjacent_pos_7_7_pos_8_7
+    - adjacent_pos_7_7_pos_6_7
+    - adjacent_pos_7_7_pos_7_8
+    - adjacent_pos_7_8_pos_8_8
+    - adjacent_pos_7_8_pos_6_8
+    - adjacent_pos_7_8_pos_7_7
+    - adjacent_pos_7_10_pos_8_10
+    - adjacent_pos_7_10_pos_6_10
+    - adjacent_pos_8_1_pos_9_1
+    - adjacent_pos_8_1_pos_7_1
+    - adjacent_pos_8_1_pos_8_2
+    - adjacent_pos_8_2_pos_9_2
+    - adjacent_pos_8_2_pos_7_2
+    - adjacent_pos_8_2_pos_8_3
+    - adjacent_pos_8_2_pos_8_1
+    - adjacent_pos_8_3_pos_7_3
+    - adjacent_pos_8_3_pos_8_4
+    - adjacent_pos_8_3_pos_8_2
+    - adjacent_pos_8_4_pos_7_4
+    - adjacent_pos_8_4_pos_8_5
+    - adjacent_pos_8_4_pos_8_3
+    - adjacent_pos_8_5_pos_7_5
+    - adjacent_pos_8_5_pos_8_6
+    - adjacent_pos_8_5_pos_8_4
+    - adjacent_pos_8_6_pos_8_7
+    - adjacent_pos_8_6_pos_8_5
+    - adjacent_pos_8_7_pos_9_7
+    - adjacent_pos_8_7_pos_7_7
+    - adjacent_pos_8_7_pos_8_8
+    - adjacent_pos_8_7_pos_8_6
+    - adjacent_pos_8_8_pos_7_8
+    - adjacent_pos_8_8_pos_8_7
+    - adjacent_pos_8_10_pos_9_10
+    - adjacent_pos_8_10_pos_7_10
+    - adjacent_pos_9_1_pos_10_1
+    - adjacent_pos_9_1_pos_8_1
+    - adjacent_pos_9_1_pos_9_2
+    - adjacent_pos_9_2_pos_10_2
+    - adjacent_pos_9_2_pos_8_2
+    - adjacent_pos_9_2_pos_9_1
+    - adjacent_pos_9_7_pos_10_7
+    - adjacent_pos_9_7_pos_8_7
+    - adjacent_pos_9_10_pos_10_10
+    - adjacent_pos_9_10_pos_8_10
+    - adjacent_pos_10_1_pos_9_1
+    - adjacent_pos_10_1_pos_10_2
+    - adjacent_pos_10_2_pos_9_2
+    - adjacent_pos_10_2_pos_10_3
+    - adjacent_pos_10_2_pos_10_1
+    - adjacent_pos_10_3_pos_10_4
+    - adjacent_pos_10_3_pos_10_2
+    - adjacent_pos_10_4_pos_10_5
+    - adjacent_pos_10_4_pos_10_3
+    - adjacent_pos_10_5_pos_10_6
+    - adjacent_pos_10_5_pos_10_4
+    - adjacent_pos_10_6_pos_10_7
+    - adjacent_pos_10_6_pos_10_5
+    - adjacent_pos_10_7_pos_9_7
+    - adjacent_pos_10_7_pos_10_8
+    - adjacent_pos_10_7_pos_10_6
+    - adjacent_pos_10_8_pos_10_9
+    - adjacent_pos_10_8_pos_10_7
+    - adjacent_pos_10_9_pos_10_10
+    - adjacent_pos_10_9_pos_10_8
+    - adjacent_pos_10_10_pos_9_10
+    - adjacent_pos_10_10_pos_10_9

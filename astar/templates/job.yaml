@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-search-job
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-search
+        image: {{ .Values.image.repository}}
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: {{ .Release.Name }}-cm
+      restartPolicy: Never

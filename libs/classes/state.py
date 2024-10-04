@@ -17,13 +17,15 @@ class State():
         else:
             self.predicates = predicates
 
-    def addPredicate(self, literal: str)->None:
+    def add_predicate(self, literal: str)->None:
+        """This method is deprecated. A state is inmutable"""
         self.predicates.add(literal)
 
-    def removeLiteral(self, literal: str)->None:
+    def remove_literal(self, literal: str)->None:
+        """This method is deprecated. A state is inmutable"""
         if literal in self.predicates:
             self.predicates.remove(literal)
-    
+
     def conditionHolds(self, precondition: frozenset)->bool:
         return precondition.issubset(self.predicates)
 
@@ -31,6 +33,10 @@ class State():
         self.predicates = self.predicates.difference(negEffect)
         self.predicates = self.predicates.union(posEffect)
     
+    def copyEmpty(self):
+        return State(self.predicates.copy(),
+                     parent_action=self.parent_action)
+
     def getSuccessorState(self, action: Action):
         # TODO: We only consider deterministic actions for the moment,
         #       that is, an action produces only a succesor
@@ -41,3 +47,14 @@ class State():
 
     def isApplicable(self, action: Action)->bool:
         return self.conditionHolds(action.precond)
+
+    def  __str__(self):
+        return self.predicates
+
+    def export(self):
+        data = {}
+        data['predicates'] = list(self.predicates)
+        data['cost'] = self.cost
+        data['heuristic'] = self.heuristic
+        data['parent_action'] = self.parent_action
+        return data

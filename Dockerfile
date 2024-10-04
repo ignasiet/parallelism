@@ -16,10 +16,14 @@ RUN pip install pipenv
 
 RUN pipenv install --system
 
+ARG EXECUTABLE
+ENV my_exec=$EXECUTABLE
+
 COPY . /home/
 
 USER root
 
 EXPOSE 5001
+EXPOSE 8080
 
-ENTRYPOINT ["python", "-m", "main"]
+ENTRYPOINT python -m ${my_exec}

@@ -12,7 +12,14 @@ class CostQueue():
         self.queue.put((element.cost+element.heuristic, time.time(), element))
 
     def getNextState(self)->State:
-        return self.queue.get()
+        try:
+            return self.queue.get()
+        except TypeError:
+            print(f"Size: {self.queue.qsize()}")
+            raise
 
     def isEmpty(self)->bool:
         return self.queue.empty()
+
+    def __len__(self):
+        return self.queue.qsize()

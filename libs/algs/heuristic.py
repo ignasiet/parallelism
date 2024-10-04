@@ -12,14 +12,19 @@ class Heuristic(Algorithm):
     def getHValue(self,
                   initialState: State)->int:
         # A star heuristic is like regular search without using the negative effects lists
+        # TODO: Verify why on heuristics parents cost are inherited
         self.resetSearch()
-        self.queue.addElement(initialState)
+        self.queue.addElement(initialState.copyEmpty())
+        # if self.isGoalState(initialState, self.goals):
+        #     return 0
         while not self.queue.isEmpty():
             # This algorithm works as follows:
             # 1 First get lowest cost state from queue
             _, _, currentState = self.queue.getNextState()
             # 2 if it is a goal state, break
             if self.isGoalState(currentState, self.goals):
+                if currentState.cost == float("inf"):
+                    currentState.cost = 0
                 break
             # 3 Generate its succesors
             for action in self.actions:
@@ -39,8 +44,6 @@ class Heuristic(Algorithm):
             # We send the current state to the closed list, because we expanded it:
             self.addStatetoClosedList(currentState)
         if not self.isGoalState(currentState, self.goals):
-            print('Error: solution not found.')
+            print(f'Dead state found: {currentState.export()}')
             return float("inf")
-        else:
-            # print(f'Solution found: {currentState.predicates}')
-            return currentState.cost
+        return currentState.cost

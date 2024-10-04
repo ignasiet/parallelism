@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.podLabels }}
+  labels:
+    app: {{ .Values.podLabels }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.podLabels }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.podLabels }}
+    spec:
+      containers:
+      - name: {{ .Values.podLabels }}
+        image: {{ .Values.image.repository}}
+        imagePullPolicy: {{ .Values.image.pullPolicy}}
+        envFrom: 
+        - configMapRef: 
+            name: {{ .Release.Name }}-cm
+        resources: {{- toYaml .Values.resources | nindent 10 }}
+        ports:
+        - containerPort: 8080

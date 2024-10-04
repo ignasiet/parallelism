@@ -1,8 +1,10 @@
 from libs.algs.search import Search
 from libs.classes import State,Action
 from libs.classes.parser import MyParser
+from libs.classes.mapper import Mapper
 import os
 
+import time
 
 # class MyStateQueue():
 #     def __init__(self) -> None:
@@ -46,13 +48,25 @@ def example():
     solution = se.start()
 
 def run():
-    path = os.getenv("problem")
+    start = time.time()
+    # path = os.getenv("problem")
+    path = "libs/problems/boarding.yaml"
     p = MyParser(path)
-    p.parse()
-    se = Search(initialState=p.getInitState(),
-                actions=p.actions,
-                goals=p.goal)
+    binary_rep = os.getenv("binary", 'False').lower() in ('true', '1', 't')
+    print(f"Using Binary representation: {binary_rep}")
+
+    se = Search(initialState=p.getInitState(binary_rep),
+                actions=p.getActions(binary_rep),
+                goals=p.getGoal(binary_rep))
+    end = time.time()
+    prev_time = end - start
+    print(f"Time to compute and parse: {prev_time}")
+
+    start = time.time()
     solution = se.start()
+    end = time.time()
+    tot_time = end - start
+    print(f"Total Search time: {tot_time}")
 
 if __name__ == "__main__":
     run()

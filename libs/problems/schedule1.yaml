@@ -1,0 +1,73 @@
+problem:
+  name: schedule1
+  objects:
+    - participant: 
+      - agent_1
+      - agent_2
+    - room:
+      - room_1
+    - timetable:
+      - monday
+      - tuesday
+      - wednesday
+      - thursday
+      - friday
+  predicates:
+    scheduled: participant, participant, room
+    free: room, timetable
+    different: participant, participant
+  actions:
+    - name: appoint
+      parameters:
+          - who1: participant
+          - who2: participant
+          - when: timetable
+          - where: room
+      precond:
+        different:
+          - who1
+          - who2
+        free:
+          - where
+          - when
+      effect:
+        pos:
+          - scheduled:
+            - who1
+            - who2
+        neg:
+          - free:
+            - where
+            - when
+    - name: free
+      parameters:
+          - who1: participant
+          - who2: participant
+          - when: timetable
+          - where: room
+      precond:
+        different:
+          - who1
+          - who2
+        scheduled:
+          - who1
+          - who2
+      effect:
+        pos:
+          - free:
+            - where
+            - when
+        neg:
+          - scheduled:
+            - who1
+            - who2
+  init:
+    - free_room_1_monday
+    - free_room_1_tuesday
+    - free_room_1_wednesday
+    - free_room_1_thursday
+    - free_room_1_friday
+    - different_agent_1_agent_2
+    - different_agent_2_agent_1
+  goal:
+    - scheduled_agent_1_agent_2

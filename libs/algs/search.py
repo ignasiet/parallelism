@@ -13,6 +13,7 @@ class Search(Algorithm):
                                         )
 
     def getHeuristicValue(self, state: State) -> int:
+        # return 0
         return self.heuristicSearch.getHValue(state)
 
     def start(self)->State:
@@ -31,7 +32,7 @@ class Search(Algorithm):
                 if not current_state.isApplicable(action):
                     continue
                 next_state = self.expandState(current_state,
-                                             action)
+                                              action)
                 if current_state.cost == float("inf"):
                     next_state.cost = action.cost
                 else:
@@ -79,6 +80,7 @@ class Search(Algorithm):
             solution.append(self.solvedStates[pState].parent_action)
             pState = self.solvedStates[pState].predicates
         solution_size = len(solution)
+        solution.reverse()
         print("**********************")
         print(f"Expanded states: {expandedStates}")
         print(f"Solution: {solution}")

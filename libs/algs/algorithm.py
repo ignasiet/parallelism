@@ -1,4 +1,4 @@
-from libs.classes import State, Action, CostQueue
+from libs.classes import State, BState, Action, CostQueue, BAction
 
 class Algorithm():
     def __init__(self,

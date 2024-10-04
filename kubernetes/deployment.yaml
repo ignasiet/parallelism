@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: astar-server
+  labels:
+    app: astar-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: astar-server
+  template:
+    metadata:
+      labels:
+        app: astar-server
+    spec:
+      containers:
+      - name: astar-server
+        image: astar-server:latest
+        imagePullPolicy: Never
+        envFrom: 
+        - configMapRef: 
+            name: astar-cm
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 150Mi
+        ports:
+        - containerPort: 8080

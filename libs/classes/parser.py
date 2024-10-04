@@ -1,34 +1,46 @@
 import yaml
-from libs.classes import Action, State
+from libs.classes import Action, State, BState
+from libs.classes.mapper import Mapper
 import itertools
+
+POS_KEYWORD = 'pos'
+NEG_KEYWORD = 'neg'
 
 class MyParser():
     def __init__(self,
-             file: str):
-        self.file_path = file
-        self.actions = []
-        self.name = ''
-        self.objects = []
-        self.init = []
-        self.predicates = {}
-        self.invariants = []
-        self.goal = ''
-
-    def getInitState(self)->State:
-        return State(predicates=self.init)
-
-    def parse(self):
+                 path: str):
+        self.file_path = path
+        self.instantiations = set()
         with open(self.file_path, 'r') as file:
             problem = yaml.safe_load(file)['problem']
             self.name = problem['name']
-            self.init = frozenset(problem['init'])
             self.objects = self.parse_objects(objects=problem['objects'])
-            self.goal = frozenset(problem['goal'])
             self.predicates = problem['predicates']
             self.invariants = self.calculate_invariants(actions=problem['actions'],
                                                         predicates=list(self.predicates.keys()))
+            self.init = frozenset(problem['init'])
+            self.goal = frozenset(problem['goal'])
             self.actions = self.parse_actions(problem['actions'])
-            self.clean_state()
+        self.clean_state()
+        self.mapper = Mapper(self.instantiations)
+
+    def getInitState(self,
+                     binarization: bool)->State:
+        if binarization:
+            return BState(predicates=self.mapper.translatePredicates(self.init))
+        return State(predicates=self.init)
+    
+    def getActions(self,
+                   binarization: bool)->list:
+        if binarization:
+            return [self.mapper.convertAction(action) for action in self.actions if self.mapper.convertAction(action) is not None]
+        return self.actions
+    
+    def getGoal(self,
+                binarization: bool)->State:
+        if binarization:
+            return self.mapper.translatePredicates(self.goal)
+        return self.goal
 
     def parse_objects(self,
                       objects: list):
@@ -46,12 +58,15 @@ class MyParser():
         variants = []
         for action in actions:
             ef = action['effect']
+            print(ef)
             # positive effects variants
-            for pe in ef['pos']:
-                variants.extend([p for p in pe if p not in variants])
+            if self.has_effect(POS_KEYWORD,ef):
+                for pe in ef['pos']:
+                    variants.extend([p for p in pe if p not in variants])
             # negative effects variants
-            for ne in ef['neg']:
-                variants.extend([p for p in ne if p not in variants])
+            if self.has_effect(NEG_KEYWORD,ef):
+                for ne in ef['neg']:
+                    variants.extend([p for p in ne if p not in variants])
         return list(set(predicates)-set(variants))
 
     def parse_actions(self, actions: list)->list[Action]:
@@ -77,7 +92,9 @@ class MyParser():
                        action: dict)->bool:
         """This function will check the validity of the arguments,
             to verify if a combination of parameters is correct,
-            that is, if it is not an invariant and not present at initial state"""
+            that is, if it is not an (invariant and not present at initial state)
+            OTHER TYPE OF INVARIANTS: impossible preconditions
+        """
         preconditions = action['precond']
         for predicate in preconditions.keys():
             if predicate in self.invariants:
@@ -123,14 +140,24 @@ class MyParser():
         # Instantiate effects
         # positive
         effects = action['effect']
-        instantiated_pos_effects = self.parse_effects(
-            effects['pos'],
-            combination)
+        if self.has_effect(POS_KEYWORD, effects):
+            instantiated_pos_effects = self.parse_effects(
+                effects['pos'],
+                combination)
+            # Add all instantiated predicates to the instatiations list
+            self.instantiations.update(instantiated_pos_effects)
+        else:
+            instantiated_pos_effects = []
 
         # negative
-        instantiated_neg_effects = self.parse_effects(
-            effects['neg'],
-            combination)
+        if self.has_effect(NEG_KEYWORD, effects):
+            instantiated_neg_effects = self.parse_effects(
+                effects['neg'],
+                combination)
+            self.instantiations.update(instantiated_neg_effects)
+        else:
+            instantiated_neg_effects = []
+
 
         name_elements = [f"{k}_{v}" for k,v in combination.items()]
         action_name = action['name']+ "_" + "_".join(name_elements)
@@ -172,10 +199,19 @@ class MyParser():
         return instantiates_effects
 
     def clean_state(self):
-        temp_init = []
-        for inv in self.invariants:
+        if self.invariants:
+            temp_init = []
             for item in self.init:
-                if not item.startswith(inv):
+                if item.split('_')[0] not in self.invariants:
                     print(f"Adding predicate: {item}")
                     temp_init.append(item)
-        self.init = frozenset(temp_init)
+                # for inv in self.invariants:
+                #     if not item.startswith(inv):
+                #         print(f"Adding predicate: {item}")
+                #         temp_init.append(item)
+            self.init = frozenset(temp_init)
+
+    def has_effect(self,
+                   keyword,
+                   effects):
+        return keyword in effects

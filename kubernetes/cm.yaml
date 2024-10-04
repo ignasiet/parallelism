@@ -3,4 +3,5 @@ kind: ConfigMap
 metadata:
   name: astar-cm
 data:
-  problem: libs/problems/problem2.yaml
+  problem: libs/problems/problem1.yaml
+  server: http://astar-server:8080

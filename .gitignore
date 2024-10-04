@@ -34,3 +34,9 @@ dist/**
 
 # Lock files
 Pipfile.lock
+
+# clean up scripts
+clean-restart.sh
+
+# Other files
+.env

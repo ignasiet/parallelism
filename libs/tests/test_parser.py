@@ -7,7 +7,6 @@ class TestParser(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
         self.p = MyParser('libs/problems/problem1.yaml')
-        self.p.parse()
 
     def test_parser(self):
         self.assertEqual(self.p.goal, frozenset(['at_agent_1_pos_4_4']))
@@ -19,7 +18,6 @@ class TestParser(unittest.TestCase):
         self.assertEqual(len(self.p.objects['pos']), 16)
 
     def test_combinations(self):
-        self.p.parse()
         combination = [{"who": "agent_1"},
                        {"from": "pos_1_1"},
                        {"to": "pos_1_4"}]
@@ -43,8 +41,8 @@ class TestParser(unittest.TestCase):
         self.assertEqual(new_comb, {'who': 'agent_1', 'from': 'pos_1_1', 'to': 'pos_1_4'})
 
     def test_parseInit(self):
-        self.assertEqual(self.p.getInitState().cost, float("inf"))
-        self.assertEqual(self.p.getInitState().heuristic, 0)
+        self.assertEqual(self.p.getInitState(False).cost, float("inf"))
+        self.assertEqual(self.p.getInitState(False).heuristic, 0)
 
     def test_validity(self):
         with open('libs/problems/problem1.yaml', 'r') as file:
@@ -91,6 +89,11 @@ class TestParser(unittest.TestCase):
 
     def test_parseActions(self):
         self.assertEqual(len(self.p.actions), 34)
+
+    def test_parse2Problem(self):
+        p = MyParser('libs/problems/schedule1.yaml')
+        assert "scheduled_agent_1_agent_2" in p.goal
+        assert "free_room_1_monday" in p.getInitState(False).predicates
 
 
 if __name__ == '__main__':
